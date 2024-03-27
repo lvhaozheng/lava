@@ -1,3 +1,0 @@
-"""
-near only support javascript
-"""
