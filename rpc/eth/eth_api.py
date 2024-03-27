@@ -21,16 +21,13 @@ def eth_get_balance(eth_rpc_endpoint, eth_address):
         ],
         'id': 1,
     }
-    try:
-        response = requests.post(eth_rpc_endpoint, headers=headers, json=json_data)
-        if response.status_code == 200 and ('error' not in response.json()):
-            balance_hex = response.json()["result"]
-            return int(balance_hex, 16)
-        else:
-            print("eth_get_balance_error, endpoint: ", eth_rpc_endpoint, " \nres: ", response.json())
-            return None
-    except Exception as e:
-       print(f"发生错误: {e}")
+    response = requests.post(eth_rpc_endpoint, headers=headers, json=json_data)
+    if response.status_code == 200 and "error" not in response.json():
+        balance_hex = response.json()["result"]
+        return int(balance_hex, 16)
+    else:
+        print("eth_get_balance_error, endpoint: ", eth_rpc_endpoint, " \nres: ", response.json())
+        return None
 
 
 def eth_block_number(eth_rpc_endpoint):
@@ -52,7 +49,7 @@ def eth_block_number(eth_rpc_endpoint):
     }
 
     response = requests.post(eth_rpc_endpoint, headers=headers, json=json_data)
-    if response.status_code == 200:
+    if response.status_code == 200 and "error" not in response.json():
         height_hex = response.json()["result"]
         return int(height_hex, 16)
     else:
@@ -77,7 +74,7 @@ def eth_gas_price(eth_rpc_endpoint):
         'jsonrpc': '2.0',
     }
     response = requests.post('https://docs-demo.quiknode.pro/', headers=headers, json=json_data)
-    if response.status_code == 200:
+    if response.status_code == 200 and "error" not in response.json():
         gas_hex = response.json()["result"]
         return int(gas_hex, 16)
     else:
@@ -112,7 +109,7 @@ def eth_estimate_gas(eth_rpc_endpoint, from_addr, to_addr, value):
     }
 
     response = requests.post(eth_rpc_endpoint, headers=headers, json=json_data)
-    if response.status_code == 200:
+    if response.status_code == 200 and "error" not in response.json():
         gas_hex = response.json()["result"]
         return int(gas_hex, 16)
     else:
@@ -134,20 +131,9 @@ def eth_send_raw_transaction(eth_rpc_endpoint, signed_data):
         'id': 1,
     }
     response = requests.post(eth_rpc_endpoint, headers=headers, json=json_data)
-    if response.status_code == 200:
+    if response.status_code == 200 and "error" not in response.json():
         tx_hash = response.json()["result"]
         return tx_hash
     else:
         print("eth_blockNumber, endpoint: ", eth_rpc_endpoint, " \nres: ", response.json())
         return None
-
-
-if __name__ == "__main__":
-    eth_rpc = "https://eth1.lava.build/lava-referer-6661cbc8-1e41-49d6-8748-7ddaf8f640df/"
-    bal = eth_get_balance(eth_rpc,
-                              "0x45607f19865aeadb39e0f24c9f5fe58dd64c6c89")
-    print("Get eth ", bal)
-    number = eth_block_number(eth_rpc)
-    print("Current BlockNumber ", number)
-    gasPrice = eth_gas_price(eth_rpc)
-    print("Gas ", gasPrice)
